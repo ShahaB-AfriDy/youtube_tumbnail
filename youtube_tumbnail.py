@@ -42,13 +42,13 @@ def create_content(prompt_text, website_name, brand_handle, logo_url):
         return None
 
 
-def check_post_status(post_id, Flag=True):
+def check_post_status(Flag=True):
     url = "https://brain.predis.ai/predis_api/v1/get_posts/"
     payload = {
         "brand_id": BRAND_ID,
         "media_type": "single_image",
-        "page_n": 1,
-        "items_n": 1
+        "page_n": 1,  # Only fetching the most recent post (first page)
+        "items_n": 1  # Only one post per page
     }
 
     headers = {
@@ -167,7 +167,7 @@ if generate_button:
         with st.spinner("Generating image..."):
             post_id = create_content(prompt_text, website_name, brand_handle, logo_url)
             if post_id:
-                image_url = check_post_status(post_id)
+                image_url = check_post_status()
                 if image_url:
                     st.image(image_url, caption="Generated Image", use_container_width=False, width=560)
 
@@ -201,11 +201,11 @@ if generate_button:
 
 
 if see_last_button:
-    image_url = check_post_status(None, Flag=False)  
+    image_url = check_post_status(Flag=False)  # Fetch the most recent post directly
     if image_url:
         st.image(image_url, caption="Last Created Post", use_container_width=False, width=560)
 
-        
+        # Provide download options for the last generated image
         st.download_button(
             label="Download Square (1080x1080)",
             data=download_image(image_url, "full"),
